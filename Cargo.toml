@@ -18,7 +18,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 bundle-id = "com.github.jcornaz.crankit-input"
 
 [dependencies]
-crankit-sys = { version = "1.0.0-rc.1", default-features = false }
+crankit-sys = { version = "1.0.0-rc.3", default-features = false }
 
 [dev-dependencies]
 rstest = { version = "0.18.2", default-features = false }
