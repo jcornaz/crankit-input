@@ -1,0 +1,19 @@
+[package]
+name = "rust-template"
+version = "0.0.0"
+license = "Unlicense"
+authors = ["Jonathan Cornaz"]
+edition = "2021"
+rust-version = "1.72"
+repository = "https://github.com/jcornaz/rust-template"
+description = ""
+categories = []
+keywords = []
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[dependencies]
+
+[dev-dependencies]
