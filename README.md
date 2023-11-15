@@ -1,16 +1,13 @@
-# rust-template
+# crankit-input
 
-![rustc](https://img.shields.io/badge/rustc-1.72+-blue?logo=rust)
+![rustc](https://img.shields.io/badge/rustc-1.73+-blue?logo=rust)
 
-* [ ] Replace all occurrences of `rust-template` by the name of the project
-* [ ] Write a description explaining the goals and/or motivation (here and in `Cargo.toml`)
-* For binaries only:
-  * [ ] Rename `lib.rs` to `main.rs` and write a main function
-  * [ ] Remove `Cargo.lock` from `.gitignore`
+An ergonomic input API for the playdate
+
 
 ## MSRV
 
-The minimum supported rust version is currently `1.72`.
+The minimum supported rust version is currently `1.73`.
 
 It will be updated when required, and that will not be considered a breaking change (it can happen in a minor version).
 

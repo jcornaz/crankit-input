@@ -1,19 +1,31 @@
 [package]
-name = "rust-template"
+name = "crankit-input"
 version = "0.0.0"
 license = "Unlicense"
 authors = ["Jonathan Cornaz"]
 edition = "2021"
-rust-version = "1.72"
-repository = "https://github.com/jcornaz/rust-template"
-description = ""
-categories = []
-keywords = []
+rust-version = "1.73"
+repository = "https://github.com/jcornaz/crankit-input"
+description = "An ergonomic input API for the playdate"
+categories = ["api-bindings", "game-development", "no-std"]
+keywords = ["playdate", "gamedev", "no_std"]
 
 [package.metadata.docs.rs]
 all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
 
+[package.metadata.playdate]
+bundle-id = "com.github.jcornaz.crankit-input"
+
 [dependencies]
+crankit-sys = { version = "1.0.0-rc.1", default-features = false }
 
 [dev-dependencies]
+rstest = { version = "0.18.2", default-features = false }
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
