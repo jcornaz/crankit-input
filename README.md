@@ -1,7 +1,5 @@
 # crankit-input
 
-![rustc](https://img.shields.io/badge/rustc-1.73+-blue?logo=rust)
-
 An ergonomic input API for the playdate
 
 
