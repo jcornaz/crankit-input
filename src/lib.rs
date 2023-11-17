@@ -2,17 +2,23 @@
 
 //! An ergonomic input API for the playdate
 
+// Re-exports from [playdate-sys](https://crates.io/playdate-sys) of types used in the public API of this crate.
+mod ffi {
+    pub use playdate_sys::ffi::{playdate_sys as System, PDButtons as Buttons};
+}
+
 use core::{
     ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign},
     ptr,
 };
 
-pub mod ffi {
-    pub use crankit_sys::{playdate_sys, PDButtons};
-}
-
+/// Entry point to access the input system
+///
+/// * Instanciate it with [`InputSystem::from_c_api`]
+/// * Get buttons state with [`InputSystem::buttons_state`]
+/// * Get crank state with [`InputSystem::crank_angle`], [`InputSystem::crank_change`] and [`InputSystem::is_crank_docked`]
 pub struct InputSystem<'a> {
-    system: &'a ffi::playdate_sys,
+    system: &'a ffi::System,
 }
 
 impl<'a> InputSystem<'a> {
@@ -27,7 +33,7 @@ impl<'a> InputSystem<'a> {
     /// Panics if the pointer is null
     ///
     #[must_use]
-    pub unsafe fn from_c_api(ptr: &'a ffi::playdate_sys) -> Self {
+    pub unsafe fn from_c_api(ptr: &'a ffi::System) -> Self {
         Self { system: ptr }
     }
 
@@ -35,9 +41,9 @@ impl<'a> InputSystem<'a> {
     #[must_use]
     #[allow(clippy::missing_panics_doc)]
     pub fn buttons_state(&self) -> ButtonsState {
-        let mut current = ffi::PDButtons(0);
-        let mut pushed = ffi::PDButtons(0);
-        let mut released = ffi::PDButtons(0);
+        let mut current = ffi::Buttons(0);
+        let mut pushed = ffi::Buttons(0);
+        let mut released = ffi::Buttons(0);
         unsafe {
             self.system.getButtonState.unwrap()(
                 ptr::addr_of_mut!(current),
@@ -178,10 +184,10 @@ pub struct ButtonSet(u8);
 impl ButtonSet {
     #[allow(clippy::cast_possible_truncation)]
     pub const D_PAD: Self = Self(
-        (ffi::PDButtons::kButtonLeft.0
-            | ffi::PDButtons::kButtonUp.0
-            | ffi::PDButtons::kButtonRight.0
-            | ffi::PDButtons::kButtonDown.0) as u8,
+        (ffi::Buttons::kButtonLeft.0
+            | ffi::Buttons::kButtonUp.0
+            | ffi::Buttons::kButtonRight.0
+            | ffi::Buttons::kButtonDown.0) as u8,
     );
 
     #[inline]
@@ -231,8 +237,8 @@ impl ButtonSet {
     }
 }
 
-impl From<ffi::PDButtons> for ButtonSet {
-    fn from(ffi::PDButtons(bits): ffi::PDButtons) -> Self {
+impl From<ffi::Buttons> for ButtonSet {
+    fn from(ffi::Buttons(bits): ffi::Buttons) -> Self {
         Self(bits.try_into().unwrap_or_default())
     }
 }
@@ -246,12 +252,12 @@ impl FromIterator<Button> for ButtonSet {
 impl From<Button> for ButtonSet {
     fn from(value: Button) -> Self {
         let pd = match value {
-            Button::Left => ffi::PDButtons::kButtonLeft,
-            Button::Right => ffi::PDButtons::kButtonRight,
-            Button::Up => ffi::PDButtons::kButtonUp,
-            Button::Down => ffi::PDButtons::kButtonDown,
-            Button::B => ffi::PDButtons::kButtonB,
-            Button::A => ffi::PDButtons::kButtonA,
+            Button::Left => ffi::Buttons::kButtonLeft,
+            Button::Right => ffi::Buttons::kButtonRight,
+            Button::Up => ffi::Buttons::kButtonUp,
+            Button::Down => ffi::Buttons::kButtonDown,
+            Button::B => ffi::Buttons::kButtonB,
+            Button::A => ffi::Buttons::kButtonA,
         };
         pd.into()
     }
@@ -361,16 +367,16 @@ mod tests {
     use super::*;
 
     #[rstest]
-    #[case(ffi::PDButtons::kButtonA, Button::A, true)]
-    #[case(ffi::PDButtons::kButtonA, Button::B, false)]
-    #[case(ffi::PDButtons::kButtonB, Button::A, false)]
-    #[case(ffi::PDButtons::kButtonB, Button::B, true)]
-    #[case(ffi::PDButtons::kButtonA | ffi::PDButtons::kButtonB, Button::B, true)]
-    #[case(ffi::PDButtons::kButtonA | ffi::PDButtons::kButtonB, Button::A, true)]
-    #[case(ffi::PDButtons::kButtonA | ffi::PDButtons::kButtonB, Button::Up, false)]
-    #[case(ffi::PDButtons::kButtonA | ffi::PDButtons::kButtonB | ffi::PDButtons::kButtonUp, Button::Up, true)]
+    #[case(ffi::Buttons::kButtonA, Button::A, true)]
+    #[case(ffi::Buttons::kButtonA, Button::B, false)]
+    #[case(ffi::Buttons::kButtonB, Button::A, false)]
+    #[case(ffi::Buttons::kButtonB, Button::B, true)]
+    #[case(ffi::Buttons::kButtonA | ffi::Buttons::kButtonB, Button::B, true)]
+    #[case(ffi::Buttons::kButtonA | ffi::Buttons::kButtonB, Button::A, true)]
+    #[case(ffi::Buttons::kButtonA | ffi::Buttons::kButtonB, Button::Up, false)]
+    #[case(ffi::Buttons::kButtonA | ffi::Buttons::kButtonB | ffi::Buttons::kButtonUp, Button::Up, true)]
     fn test_set_contains(
-        #[case] raw_set: ffi::PDButtons,
+        #[case] raw_set: ffi::Buttons,
         #[case] button: Button,
         #[case] expected: bool,
     ) {
