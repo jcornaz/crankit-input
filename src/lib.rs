@@ -8,7 +8,8 @@ mod ffi {
 }
 
 use core::{
-    ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign},
+    iter::Sum,
+    ops::{Add, AddAssign},
     ptr,
 };
 
@@ -182,6 +183,7 @@ impl ButtonsState {
 pub struct ButtonSet(u8);
 
 impl ButtonSet {
+    /// The set of 4 D-Pad buttons (up, down, left, right)
     #[allow(clippy::cast_possible_truncation)]
     pub const D_PAD: Self = Self(
         (ffi::Buttons::kButtonLeft.0
@@ -205,7 +207,7 @@ impl ButtonSet {
     #[inline]
     #[must_use]
     pub fn contains_any(self, buttons: ButtonSet) -> bool {
-        (self & buttons).0 > 0
+        (self.0 & buttons.0) > 0
     }
 
     /// Returns the d-pad buttons contained in this set as a 2d vector
@@ -237,86 +239,69 @@ impl ButtonSet {
     }
 }
 
+#[allow(clippy::suspicious_op_assign_impl)]
+impl AddAssign<ButtonSet> for ButtonSet {
+    fn add_assign(&mut self, rhs: ButtonSet) {
+        self.0 |= rhs.0;
+    }
+}
+
+impl Add<ButtonSet> for ButtonSet {
+    type Output = Self;
+    fn add(mut self, rhs: ButtonSet) -> Self::Output {
+        self += rhs;
+        self
+    }
+}
+
+impl Sum<ButtonSet> for ButtonSet {
+    fn sum<I: Iterator<Item = ButtonSet>>(iter: I) -> Self {
+        iter.fold(Self::default(), |set, button| set + button)
+    }
+}
+
+impl AddAssign<Button> for ButtonSet {
+    fn add_assign(&mut self, rhs: Button) {
+        *self += ButtonSet::from(rhs);
+    }
+}
+
+impl Add<Button> for ButtonSet {
+    type Output = Self;
+    fn add(self, rhs: Button) -> Self::Output {
+        self + ButtonSet::from(rhs)
+    }
+}
+
+impl Sum<Button> for ButtonSet {
+    fn sum<I: Iterator<Item = Button>>(iter: I) -> Self {
+        iter.map(ButtonSet::from).sum()
+    }
+}
+
+impl Extend<Button> for ButtonSet {
+    fn extend<T: IntoIterator<Item = Button>>(&mut self, iter: T) {
+        *self += iter.into_iter().sum::<ButtonSet>();
+    }
+}
+
+impl FromIterator<Button> for ButtonSet {
+    fn from_iter<T: IntoIterator<Item = Button>>(iter: T) -> Self {
+        let mut result = Self::default();
+        result.extend(iter);
+        result
+    }
+}
+
 impl From<ffi::Buttons> for ButtonSet {
     fn from(ffi::Buttons(bits): ffi::Buttons) -> Self {
         Self(bits.try_into().unwrap_or_default())
     }
 }
 
-impl FromIterator<Button> for ButtonSet {
-    fn from_iter<T: IntoIterator<Item = Button>>(iter: T) -> Self {
-        iter.into_iter().fold(Self::default(), BitOr::bitor)
-    }
-}
-
 impl From<Button> for ButtonSet {
     fn from(value: Button) -> Self {
-        let pd = match value {
-            Button::Left => ffi::Buttons::kButtonLeft,
-            Button::Right => ffi::Buttons::kButtonRight,
-            Button::Up => ffi::Buttons::kButtonUp,
-            Button::Down => ffi::Buttons::kButtonDown,
-            Button::B => ffi::Buttons::kButtonB,
-            Button::A => ffi::Buttons::kButtonA,
-        };
-        pd.into()
-    }
-}
-
-impl BitOrAssign for ButtonSet {
-    fn bitor_assign(&mut self, rhs: Self) {
-        self.0 |= rhs.0;
-    }
-}
-
-impl BitOr for ButtonSet {
-    type Output = Self;
-
-    fn bitor(mut self, rhs: Self) -> Self::Output {
-        self |= rhs;
-        self
-    }
-}
-
-impl BitOrAssign<Button> for ButtonSet {
-    fn bitor_assign(&mut self, rhs: Button) {
-        *self |= ButtonSet::from(rhs);
-    }
-}
-
-impl BitOr<Button> for ButtonSet {
-    type Output = Self;
-    fn bitor(mut self, rhs: Button) -> Self::Output {
-        self |= rhs;
-        self
-    }
-}
-
-impl BitAndAssign for ButtonSet {
-    fn bitand_assign(&mut self, rhs: Self) {
-        self.0 &= rhs.0;
-    }
-}
-
-impl BitAnd for ButtonSet {
-    type Output = Self;
-    fn bitand(mut self, rhs: Self) -> Self::Output {
-        self &= rhs;
-        self
-    }
-}
-
-impl BitAndAssign<Button> for ButtonSet {
-    fn bitand_assign(&mut self, rhs: Button) {
-        *self &= ButtonSet::from(rhs);
-    }
-}
-
-impl BitAnd<Button> for ButtonSet {
-    type Output = Self;
-    fn bitand(mut self, rhs: Button) -> Self::Output {
-        self &= rhs;
-        self
+        ffi::Buttons::from(value).into()
     }
 }
 
@@ -331,32 +316,16 @@ pub enum Button {
     B,
 }
 
-impl BitOr for Button {
-    type Output = ButtonSet;
-    fn bitor(self, rhs: Self) -> Self::Output {
-        ButtonSet::from(self) | ButtonSet::from(rhs)
-    }
-}
-
-impl BitAnd for Button {
-    type Output = ButtonSet;
-    fn bitand(self, rhs: Self) -> Self::Output {
-        ButtonSet::from(self) & ButtonSet::from(rhs)
-    }
-}
-
-impl BitOr<ButtonSet> for Button {
-    type Output = ButtonSet;
-
-    fn bitor(self, rhs: ButtonSet) -> Self::Output {
-        rhs | self
-    }
-}
-
-impl BitAnd<ButtonSet> for Button {
-    type Output = ButtonSet;
-    fn bitand(self, rhs: ButtonSet) -> Self::Output {
-        rhs & self
+impl From<Button> for ffi::Buttons {
+    fn from(value: Button) -> Self {
+        match value {
+            Button::Left => ffi::Buttons::kButtonLeft,
+            Button::Right => ffi::Buttons::kButtonRight,
+            Button::Up => ffi::Buttons::kButtonUp,
+            Button::Down => ffi::Buttons::kButtonDown,
+            Button::B => ffi::Buttons::kButtonB,
+            Button::A => ffi::Buttons::kButtonA,
+        }
     }
 }
 
@@ -404,13 +373,13 @@ mod tests {
 
     #[rstest]
     #[case(ButtonSet::default(), [0, 0])]
-    #[case(ButtonSet::default() | Button::Up, [0, -1])]
-    #[case(ButtonSet::default() | Button::Down, [0, 1])]
-    #[case(ButtonSet::default() | Button::Left, [-1, 0])]
-    #[case(ButtonSet::default() | Button::Right, [1, 0])]
-    #[case(ButtonSet::default() | Button::Right | Button::Down | Button::Up, [1, 0])]
-    #[case(ButtonSet::default() | Button::Left | Button::Right | Button::Up, [0, -1])]
-    #[case(ButtonSet::default() | Button::Left | Button::Right | Button::Up | Button::Down, [0, 0])]
+    #[case(ButtonSet::default() + Button::Up, [0, -1])]
+    #[case(ButtonSet::default() + Button::Down, [0, 1])]
+    #[case(ButtonSet::default() + Button::Left, [-1, 0])]
+    #[case(ButtonSet::default() + Button::Right, [1, 0])]
+    #[case(ButtonSet::default() + Button::Right + Button::Down + Button::Up, [1, 0])]
+    #[case(ButtonSet::default() + Button::Left + Button::Right + Button::Up, [0, -1])]
+    #[case(ButtonSet::default() + Button::Left + Button::Right + Button::Up + Button::Down, [0, 0])]
     fn d_pad_vector(#[case] set: ButtonSet, #[case] expected: [i8; 2]) {
         assert_eq!(set.d_pad::<i8>(), expected);
         assert_eq!(set.d_pad::<i32>(), [expected[0].into(), expected[1].into()]);
