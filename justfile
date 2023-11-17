@@ -1,8 +1,7 @@
 set dotenv-load
 
 # Perform all verifications (compile, test, lint, etc.)
-verify: test lint doc check-msrv
-	cargo deny check licenses
+verify: test lint doc
 
 # Watch the source files and run `just verify` when source changes
 watch:
@@ -26,10 +25,6 @@ doc *args:
 # Open the documentation page
 doc-open: (doc "--open")
 
-# Make sure the MSRV is satisfiable
-check-msrv:
-	cargo msrv verify
-
 # Clean up compilation output
 clean:
 	rm -rf target
@@ -40,7 +35,7 @@ clean:
 install-dev-tools:
 	rustup install stable
 	rustup override set stable
-	cargo install cargo-hack cargo-watch cargo-msrv
+	cargo install cargo-hack cargo-watch cargo-playdate
 
 # Install a git hook to run tests before every commits
 install-git-hooks:
