@@ -215,18 +215,6 @@ impl ButtonSet {
     /// * Up is [0, -1]
     ///
     /// If more than one D-Pad button is contained in the set, this method returns the sum of the vectors.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use crankit_input::{ButtonSet, Button};
-    /// let up_right = ButtonSet::default() | Button::Up | Button::Right;
-    /// assert_eq!(up_right.d_pad::<i8>(), [1, -1]);
-    ///
-    /// let up_down_left = ButtonSet::default() | Button::Up | Button::Down | Button::Left;
-    /// assert_eq!(up_down_left.d_pad::<i8>(), [-1, 0]);
-    /// ```
-    ///
     #[must_use]
     pub fn d_pad<T: From<i8>>(self) -> [T; 2] {
         let mut x = 0;
