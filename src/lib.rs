@@ -1,5 +1,3 @@
-#![deny(future_incompatible, nonstandard_style, private_in_public)]
-#![cfg_attr(docsrs, feature(doc_cfg))]
 #![no_std]
 
 //! An ergonomic input API for the playdate
