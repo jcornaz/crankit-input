@@ -3,13 +3,6 @@
 An ergonomic input API for the playdate
 
 
-## MSRV
-
-The minimum supported rust version is currently `1.73`.
-
-It will be updated when required, and that will not be considered a breaking change (it can happen in a minor version).
-
-
 ## Unlicense
 
 This is free and unencumbered software released into the public domain.
