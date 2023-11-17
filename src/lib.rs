@@ -11,34 +11,30 @@ pub mod ffi {
     pub use crankit_sys::{playdate_sys, PDButtons};
 }
 
-pub struct InputSystem {
-    system: &'static ffi::playdate_sys,
+pub struct InputSystem<'a> {
+    system: &'a ffi::playdate_sys,
 }
 
-impl InputSystem {
-    /// Create the input system from a pointer to the playdate system API
+impl<'a> InputSystem<'a> {
+    /// Create the input system from a reference to the playdate system API
     ///
     /// # Safety
     ///
-    /// * This function should only be invoked when running from a playdate device or simulator
-    /// * The pointer must point to a valid and initialized playdate system API
-    /// * The pointed memory must outlive the returnd [`InputSystem`]
+    /// * The referenced api must be a valid and initialized playdate api that's safe to use for the lifetime `'a`
     ///
     /// # Panics
     ///
     /// Panics if the pointer is null
     ///
     #[must_use]
-    pub unsafe fn from_ptr(ptr: *const ffi::playdate_sys) -> Self {
-        Self {
-            system: ptr.as_ref().unwrap(),
-        }
+    pub unsafe fn from_c_api(ptr: &'a ffi::playdate_sys) -> Self {
+        Self { system: ptr }
     }
 
-    /// Returns the current [`ButtonState`]
+    /// Returns the current [`ButtonsState`]
     #[must_use]
     #[allow(clippy::missing_panics_doc)]
-    pub fn button_state(&self) -> ButtonState {
+    pub fn buttons_state(&self) -> ButtonsState {
         let mut current = ffi::PDButtons(0);
         let mut pushed = ffi::PDButtons(0);
         let mut released = ffi::PDButtons(0);
@@ -49,7 +45,7 @@ impl InputSystem {
                 ptr::addr_of_mut!(released),
             );
         }
-        ButtonState {
+        ButtonsState {
             current: current.into(),
             pushed: pushed.into(),
             released: released.into(),
@@ -84,7 +80,7 @@ impl InputSystem {
 
 /// State of the playdate buttons
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
-pub struct ButtonState {
+pub struct ButtonsState {
     /// Buttons currently being pressed
     pub current: ButtonSet,
     /// Buttons that are have just started to be pressed
@@ -97,7 +93,7 @@ pub struct ButtonState {
     pub released: ButtonSet,
 }
 
-impl ButtonState {
+impl ButtonsState {
     /// Returns true if the given button is currently pressed
     #[inline]
     #[must_use]
