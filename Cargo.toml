@@ -28,3 +28,8 @@ panic = "abort"
 [profile.release]
 panic = "abort"
 
+[lints.clippy]
+exhaustive_enums = "deny"
+exhaustive_structs = "deny"
+pedantic = "warn"
+
