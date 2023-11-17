@@ -1,6 +1,8 @@
 #![no_std]
 
 //! An ergonomic input API for the playdate
+//!
+//! The entry point is [`InputSystem`] from which it is notably possible to get a [`ButtonsState`]
 
 // Re-exports from [playdate-sys](https://crates.io/playdate-sys) of types used in the public API of this crate.
 mod ffi {
@@ -28,10 +30,6 @@ impl<'a> InputSystem<'a> {
     /// # Safety
     ///
     /// * The referenced api must be a valid and initialized playdate api that's safe to use for the lifetime `'a`
-    ///
-    /// # Panics
-    ///
-    /// Panics if the pointer is null
     ///
     #[must_use]
     pub unsafe fn from_c_api(ptr: &'a ffi::System) -> Self {
@@ -305,6 +303,7 @@ impl From<Button> for ButtonSet {
     }
 }
 
+/// A button on the playdate
 #[allow(clippy::exhaustive_enums)]
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Button {
