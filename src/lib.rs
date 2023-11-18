@@ -53,7 +53,7 @@ impl<'a> InputSystem<'a> {
         }
     }
 
-    /// Returns the current position of the crank, in the range 0-360.
+    /// Returns the current position of the crank, in degrees (range from `0` to `360`).
     ///
     /// Zero is pointing up, and the value increases as the crank moves clockwise, as viewed from the right side of the device.
     #[must_use]
@@ -72,7 +72,7 @@ impl<'a> InputSystem<'a> {
         unsafe { self.system.getCrankAngle.unwrap()() }
     }
 
-    /// Returns the current position of the crank, in the radians (reange from `0` to `2 * f32::consts::PI`).
+    /// Returns the current position of the crank, in the radians (range from `0` to `2 * f32::consts::PI`).
     ///
     /// Zero is pointing up, and the value increases as the crank moves clockwise, as viewed from the right side of the device.
     #[must_use]
@@ -81,7 +81,7 @@ impl<'a> InputSystem<'a> {
         self.crank_angle_deg().to_radians()
     }
 
-    /// Returns the angle change of the crank since the last time this function was called.
+    /// Returns the angle change (in degrees) of the crank since the last time this function was called.
     ///
     /// Negative values are anti-clockwise.
     #[must_use]
