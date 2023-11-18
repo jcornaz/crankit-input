@@ -5,7 +5,7 @@
 //! The trait [`InputSource`] abstract the input API.
 //!
 //! To get an implementation of the [`InputSource`] trait,
-//! enable the cargo feature `playdate-sys` and call `interop::playdate_sys::PlaydateInput::from_c_api`.
+//! enable the cargo feature `playdate-sys-v02` and call `interop::playdate_sys_v02::PlaydateInput::from_c_api`.
 
 mod button;
 pub mod interop;

@@ -1,6 +1,6 @@
 use core::ptr;
 
-use playdate_sys::ffi::PDButtons;
+use playdate_sys_v02::ffi::PDButtons;
 
 use crate::{Button, ButtonSet, ButtonsState, InputSource};
 
@@ -8,7 +8,7 @@ use crate::{Button, ButtonSet, ButtonsState, InputSource};
 ///
 /// Can only be used in real playdate simulator or device.
 pub struct PlaydateInput<'a> {
-    system: &'a playdate_sys::ffi::playdate_sys,
+    system: &'a playdate_sys_v02::ffi::playdate_sys,
 }
 
 impl<'a> PlaydateInput<'a> {
@@ -19,7 +19,7 @@ impl<'a> PlaydateInput<'a> {
     /// * The referenced api must be a valid and initialized playdate api that's safe to use for the lifetime `'a`
     ///
     #[must_use]
-    pub unsafe fn from_c_api(system: &'a playdate_sys::ffi::playdate_sys) -> Self {
+    pub unsafe fn from_c_api(system: &'a playdate_sys_v02::ffi::playdate_sys) -> Self {
         Self { system }
     }
 }
