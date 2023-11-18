@@ -1,1 +1,1 @@
-mod playdate_sys;
+pub mod playdate_sys;

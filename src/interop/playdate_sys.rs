@@ -1,6 +1,67 @@
+use core::ptr;
+
 use playdate_sys::ffi::PDButtons;
 
-use crate::{Button, ButtonSet};
+use crate::{Button, ButtonSet, ButtonsState, InputSource};
+
+/// Implementation of [`InputSource`] that calls the playdate system
+///
+/// Can only be used in real playdate simulator or device.
+pub struct PlaydateInput<'a> {
+    system: &'a playdate_sys::ffi::playdate_sys,
+}
+
+impl<'a> PlaydateInput<'a> {
+    /// Create the input system from a reference to the playdate system API
+    ///
+    /// # Safety
+    ///
+    /// * The referenced api must be a valid and initialized playdate api that's safe to use for the lifetime `'a`
+    ///
+    #[must_use]
+    pub unsafe fn from_c_api(system: &'a playdate_sys::ffi::playdate_sys) -> Self {
+        Self { system }
+    }
+}
+
+impl<'a> crate::private::Sealed for PlaydateInput<'a> {}
+
+impl<'a> InputSource for PlaydateInput<'a> {
+    #[must_use]
+    #[allow(clippy::missing_panics_doc)]
+    fn buttons_state(&self) -> ButtonsState {
+        let mut current = PDButtons(0);
+        let mut pushed = PDButtons(0);
+        let mut released = PDButtons(0);
+        unsafe {
+            self.system.getButtonState.unwrap()(
+                ptr::addr_of_mut!(current),
+                ptr::addr_of_mut!(pushed),
+                ptr::addr_of_mut!(released),
+            );
+        }
+        ButtonsState {
+            current: current.into(),
+            pushed: pushed.into(),
+            released: released.into(),
+        }
+    }
+
+    #[must_use]
+    fn crank_angle_deg(&self) -> f32 {
+        unsafe { self.system.getCrankAngle.unwrap()() }
+    }
+
+    #[must_use]
+    fn crank_change_deg(&self) -> f32 {
+        unsafe { self.system.getCrankChange.unwrap()() }
+    }
+
+    #[must_use]
+    fn is_crank_docked(&self) -> bool {
+        unsafe { self.system.isCrankDocked.unwrap()() == 1 }
+    }
+}
 
 impl From<PDButtons> for ButtonSet {
     #[allow(clippy::cast_possible_truncation)]
