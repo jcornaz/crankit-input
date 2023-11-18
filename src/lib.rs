@@ -4,12 +4,17 @@
 //!
 //! The entry point is [`InputSystem`] from which it is notably possible to get a [`ButtonsState`]
 
+mod button;
+mod interop;
+
 // Re-exports from [playdate-sys](https://crates.io/playdate-sys) of types used in the public API of this crate.
 mod ffi {
     pub use playdate_sys::ffi::{playdate_sys as System, PDButtons as Buttons};
 }
 
 use core::ptr;
+
+pub use button::Button;
 
 /// Entry point to access the input system
 ///
@@ -299,40 +304,9 @@ impl<const N: usize> From<[Button; N]> for ButtonSet {
     }
 }
 
-impl From<ffi::Buttons> for ButtonSet {
-    fn from(ffi::Buttons(bits): ffi::Buttons) -> Self {
-        Self(bits.try_into().unwrap_or_default())
-    }
-}
-
 impl From<Button> for ButtonSet {
     fn from(value: Button) -> Self {
         ffi::Buttons::from(value).into()
-    }
-}
-
-/// A button on the playdate
-#[allow(clippy::exhaustive_enums)]
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
-pub enum Button {
-    Left,
-    Right,
-    Up,
-    Down,
-    A,
-    B,
-}
-
-impl From<Button> for ffi::Buttons {
-    fn from(value: Button) -> Self {
-        match value {
-            Button::Left => ffi::Buttons::kButtonLeft,
-            Button::Right => ffi::Buttons::kButtonRight,
-            Button::Up => ffi::Buttons::kButtonUp,
-            Button::Down => ffi::Buttons::kButtonDown,
-            Button::B => ffi::Buttons::kButtonB,
-            Button::A => ffi::Buttons::kButtonA,
-        }
     }
 }
 
