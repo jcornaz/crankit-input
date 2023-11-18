@@ -57,9 +57,28 @@ impl<'a> InputSystem<'a> {
     ///
     /// Zero is pointing up, and the value increases as the crank moves clockwise, as viewed from the right side of the device.
     #[must_use]
+    #[deprecated = "explicitely choose the crank angle unit by calling `crank_angle_deg` or `crank_angle_rad`"]
     #[allow(clippy::missing_panics_doc)]
     pub fn crank_angle(&self) -> f32 {
+        self.crank_angle_deg()
+    }
+
+    /// Returns the current position of the crank, in degrees (range from `0` to `360`).
+    ///
+    /// Zero is pointing up, and the value increases as the crank moves clockwise, as viewed from the right side of the device.
+    #[must_use]
+    #[allow(clippy::missing_panics_doc)]
+    pub fn crank_angle_deg(&self) -> f32 {
         unsafe { self.system.getCrankAngle.unwrap()() }
+    }
+
+    /// Returns the current position of the crank, in the radians (reange from `0` to `2 * f32::consts::PI`).
+    ///
+    /// Zero is pointing up, and the value increases as the crank moves clockwise, as viewed from the right side of the device.
+    #[must_use]
+    #[allow(clippy::missing_panics_doc)]
+    pub fn crank_angle_rad(&self) -> f32 {
+        self.crank_angle_deg().to_radians()
     }
 
     /// Returns the angle change of the crank since the last time this function was called.
@@ -67,8 +86,27 @@ impl<'a> InputSystem<'a> {
     /// Negative values are anti-clockwise.
     #[must_use]
     #[allow(clippy::missing_panics_doc)]
+    #[deprecated = "explicitely choose the crank change unit unit by calling `crank_change_deg` or `crank_change_rad`"]
     pub fn crank_change(&self) -> f32 {
+        self.crank_change_deg()
+    }
+
+    /// Returns the angle change (in degrees) of the crank since the last time this function was called.
+    ///
+    /// Negative values are anti-clockwise.
+    #[must_use]
+    #[allow(clippy::missing_panics_doc)]
+    pub fn crank_change_deg(&self) -> f32 {
         unsafe { self.system.getCrankChange.unwrap()() }
+    }
+
+    /// Returns the angle change (in radians) of the crank since the last time this function was called.
+    ///
+    /// Negative values are anti-clockwise.
+    #[must_use]
+    #[allow(clippy::missing_panics_doc)]
+    pub fn crank_change_rad(&self) -> f32 {
+        self.crank_change_deg().to_radians()
     }
 
     /// Returns whether or not the crank is folded into the unit.

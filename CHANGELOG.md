@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+* `InputSystem::crank_angle_rad` and `InputSystem::crank_change_rad` to get crank state in radians
+* `InputSystem::crank_angle_deg` and `InputSystem::crank_change_deg` to explicitely get crank state in degees
+
+### Deprecated
+
+* `InputSystem::crank_angle` and `InputSystem::crank_change`: One should explicitely choose the angle unit by calling the respective `*_deg` or `*_rad` method instead.
+
 ### Documentation
 
 * minor documentation fixes
