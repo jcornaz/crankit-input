@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Documentation
+
+Attempt at fixing documentation on https://docs.rs/crankit-input
+
 
 ## [0.3.0] - 2023-11-18
 
