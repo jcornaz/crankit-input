@@ -11,7 +11,12 @@ keywords = ["playdate", "gamedev", "no_std"]
 
 [package.metadata.docs.rs]
 all-features = true
-rustdoc-args = ["--cfg", "docsrs"]
+rustdoc-args = ["--cfg", "docsrs", "--show-type-layout"]
+default-target = "thumbv7em-none-eabihf"
+cargo-args = [
+	"-Zunstable-options",
+	"-Zbuild-std=core,alloc",
+]
 
 [package.metadata.playdate]
 bundle-id = "com.github.jcornaz.crankit-input"
