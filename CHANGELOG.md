@@ -7,7 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-Minor documentation inprovements
+### Breaking changes
+
+* Remove arithmetic operators (`+`, `+=`, `Sum`) implementation for `ButtonSet`
+
+### Added
+
+* `ButtonSet::insert`
+* Implement `From<[Button; N]>` and `From<&[Button]>` for `ButtonSet`
+
+### Documentation
+
+* Minor documentation inprovements
 
 
 ## [0.1.0] - 2023-11-17

@@ -9,11 +9,7 @@ mod ffi {
     pub use playdate_sys::ffi::{playdate_sys as System, PDButtons as Buttons};
 }
 
-use core::{
-    iter::Sum,
-    ops::{Add, AddAssign},
-    ptr,
-};
+use core::ptr;
 
 /// Entry point to access the input system
 ///
@@ -196,6 +192,10 @@ impl ButtonSet {
         Self::default()
     }
 
+    pub fn insert(&mut self, button: Button) {
+        self.0 |= ButtonSet::from(button).0;
+    }
+
     #[inline]
     #[must_use]
     pub fn contains(self, button: Button) -> bool {
@@ -237,49 +237,9 @@ impl ButtonSet {
     }
 }
 
-#[allow(clippy::suspicious_op_assign_impl)]
-impl AddAssign<ButtonSet> for ButtonSet {
-    fn add_assign(&mut self, rhs: ButtonSet) {
-        self.0 |= rhs.0;
-    }
-}
-
-impl Add<ButtonSet> for ButtonSet {
-    type Output = Self;
-    fn add(mut self, rhs: ButtonSet) -> Self::Output {
-        self += rhs;
-        self
-    }
-}
-
-impl Sum<ButtonSet> for ButtonSet {
-    fn sum<I: Iterator<Item = ButtonSet>>(iter: I) -> Self {
-        iter.fold(Self::default(), |set, button| set + button)
-    }
-}
-
-impl AddAssign<Button> for ButtonSet {
-    fn add_assign(&mut self, rhs: Button) {
-        *self += ButtonSet::from(rhs);
-    }
-}
-
-impl Add<Button> for ButtonSet {
-    type Output = Self;
-    fn add(self, rhs: Button) -> Self::Output {
-        self + ButtonSet::from(rhs)
-    }
-}
-
-impl Sum<Button> for ButtonSet {
-    fn sum<I: Iterator<Item = Button>>(iter: I) -> Self {
-        iter.map(ButtonSet::from).sum()
-    }
-}
-
 impl Extend<Button> for ButtonSet {
     fn extend<T: IntoIterator<Item = Button>>(&mut self, iter: T) {
-        *self += iter.into_iter().sum::<ButtonSet>();
+        iter.into_iter().for_each(|b| self.insert(b));
     }
 }
 
@@ -288,6 +248,18 @@ impl FromIterator<Button> for ButtonSet {
         let mut result = Self::default();
         result.extend(iter);
         result
+    }
+}
+
+impl From<&[Button]> for ButtonSet {
+    fn from(value: &[Button]) -> Self {
+        value.iter().copied().collect()
+    }
+}
+
+impl<const N: usize> From<[Button; N]> for ButtonSet {
+    fn from(value: [Button; N]) -> Self {
+        value.into_iter().collect()
     }
 }
 
@@ -372,14 +344,15 @@ mod tests {
 
     #[rstest]
     #[case(ButtonSet::default(), [0, 0])]
-    #[case(ButtonSet::default() + Button::Up, [0, -1])]
-    #[case(ButtonSet::default() + Button::Down, [0, 1])]
-    #[case(ButtonSet::default() + Button::Left, [-1, 0])]
-    #[case(ButtonSet::default() + Button::Right, [1, 0])]
-    #[case(ButtonSet::default() + Button::Right + Button::Down + Button::Up, [1, 0])]
-    #[case(ButtonSet::default() + Button::Left + Button::Right + Button::Up, [0, -1])]
-    #[case(ButtonSet::default() + Button::Left + Button::Right + Button::Up + Button::Down, [0, 0])]
-    fn d_pad_vector(#[case] set: ButtonSet, #[case] expected: [i8; 2]) {
+    #[case([Button::Up], [0, -1])]
+    #[case([Button::Down], [0, 1])]
+    #[case([Button::Left], [-1, 0])]
+    #[case([Button::Right], [1, 0])]
+    #[case([Button::Right, Button::Down, Button::Up], [1, 0])]
+    #[case([Button::Left, Button::Right, Button::Up], [0, -1])]
+    #[case([Button::Left, Button::Right, Button::Up, Button::Down], [0, 0])]
+    fn d_pad_vector(#[case] set: impl Into<ButtonSet>, #[case] expected: [i8; 2]) {
+        let set = set.into();
         assert_eq!(set.d_pad::<i8>(), expected);
         assert_eq!(set.d_pad::<i32>(), [expected[0].into(), expected[1].into()]);
         let _: [f32; 2] = set.d_pad::<f32>();
