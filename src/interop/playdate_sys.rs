@@ -99,6 +99,6 @@ mod tests {
     ) {
         let set: ButtonSet = raw_set.into();
         assert_eq!(set.contains(button), expected);
-        assert_eq!(set.contains_any(button.into()), expected);
+        assert_eq!(set.contains_any(button), expected);
     }
 }

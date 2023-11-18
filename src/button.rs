@@ -101,24 +101,30 @@ impl Set {
 
     #[inline]
     #[must_use]
+    #[allow(missing_docs)]
     pub fn new() -> Self {
         Self::default()
     }
 
+    #[allow(missing_docs)]
     pub fn insert(&mut self, button: Button) {
         self.0 |= Set::from(button).0;
     }
 
+    /// Returns true if the set contains the button
     #[inline]
     #[must_use]
     pub fn contains(self, button: Button) -> bool {
-        self.contains_any(button.into())
+        self.contains_any(button)
     }
 
+    /// Returns true if the set contains any of the buttons in the other set.
+    ///
+    /// Returns `false` if the other set is empty.
     #[inline]
     #[must_use]
-    pub fn contains_any(self, buttons: Set) -> bool {
-        (self.0 & buttons.0) > 0
+    pub fn contains_any(self, buttons: impl Into<Self>) -> bool {
+        (self.0 & buttons.into().0) > 0
     }
 
     /// Returns the d-pad buttons contained in this set as a 2d vector
@@ -204,7 +210,7 @@ mod tests {
     ) {
         let set = set.into();
         assert_eq!(set.contains(button), expected);
-        assert_eq!(set.contains_any(button.into()), expected);
+        assert_eq!(set.contains_any(button), expected);
     }
 
     #[rstest]
@@ -239,7 +245,7 @@ mod tests {
 
 /// A button on the playdate
 #[repr(u8)]
-#[allow(clippy::exhaustive_enums)]
+#[allow(clippy::exhaustive_enums, missing_docs)]
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Button {
     Left = 1,

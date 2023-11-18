@@ -24,7 +24,7 @@ for more explicit angle unit.
 
 ### Documentation
 
-* minor documentation fixes
+* General documentation improvements, including fixes and more documentation.
 
 
 ## [0.2.0] - 2023-11-18

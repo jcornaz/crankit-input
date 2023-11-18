@@ -13,12 +13,18 @@ mod interop;
 
 pub use button::{Button, Set as ButtonSet, State as ButtonsState};
 
+/// A source of button state
+///
+/// It is notably implemented for for the type `ffi::playdate_sys` and `ffi::PlaydateAPI` of the crate [`playdate-sys`](https://docs.rs/playdate-sys/0.2) (require the feature flag `playdate-sys-v02`)
 pub trait ButtonsStateSource {
     /// Returns the current [`ButtonsState`]
     #[must_use]
     fn buttons_state(&self) -> ButtonsState;
 }
 
+/// A source of the crank state
+///
+/// It is notably implemented for for the type `ffi::playdate_sys` and `ffi::PlaydateAPI` of the crate [`playdate-sys`](https://docs.rs/playdate-sys/0.2) (require the feature flag `playdate-sys-v02`)
 pub trait CrankStateSource {
     /// Returns the current position of the crank, in degrees (range from `0` to `360`).
     ///
