@@ -2,21 +2,24 @@
 
 //! An ergonomic input API for the playdate
 //!
-//! The trait [`InputSource`] abstract the input API.
+//! The traits [`ButtonsStateSource`] and [`CrankStateSource`] describes the available API.
 //!
-//! To get an implementation of the [`InputSource`] trait,
-//! enable the cargo feature `playdate-sys-v02` and call `interop::playdate_sys_v02::PlaydateInput::from_c_api`.
+//! ## Feature flags
+//!
+//! * `playdate-sys-v02`: provides implementations of the input source traits for the type `ffi::playdate_sys` and `ffi::PlaydateAPI` of the crate [`playdate-sys`](https://docs.rs/playdate-sys/0.2) (version `0.2`)
 
 mod button;
-pub mod interop;
+mod interop;
 
 pub use button::{Button, Set as ButtonSet, State as ButtonsState};
 
-pub trait InputSource: private::Sealed {
+pub trait ButtonsStateSource {
     /// Returns the current [`ButtonsState`]
     #[must_use]
     fn buttons_state(&self) -> ButtonsState;
+}
 
+pub trait CrankStateSource {
     /// Returns the current position of the crank, in degrees (range from `0` to `360`).
     ///
     /// Zero is pointing up, and the value increases as the crank moves clockwise, as viewed from the right side of the device.
@@ -48,8 +51,4 @@ pub trait InputSource: private::Sealed {
     /// Returns whether or not the crank is folded into the unit.
     #[must_use]
     fn is_crank_docked(&self) -> bool;
-}
-
-mod private {
-    pub trait Sealed {}
 }

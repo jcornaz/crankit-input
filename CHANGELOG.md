@@ -7,15 +7,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Breaking changes
+
+`InputSystem` is removed and is replace by two *traits* `ButtonsStateSource` and `CrankStateSource`.
+
+There are implementation of those traits for the types in [`playdate-sys`](https://docs.rs/playdate-sys/0.2) behind the feature
+flag `playdate-sys-v02` (enabled by default).
+
+`crank_angle` and `crank_change` methods are replaced by `crank_angle_rad`, `crank_angle_deg`, `crank_change_rad` and `crank_change_deg`,
+for more explicit angle unit.
+
 ### Added
 
-* `InputSystem::crank_angle_rad` and `InputSystem::crank_change_rad` to get crank state in radians
-* `InputSystem::crank_angle_deg` and `InputSystem::crank_change_deg` to explicitely get crank state in degees
 * Implement `From<ButtonSet>` for `playdate_sys::ffi::PDButtons`
 
-### Deprecated
-
-* `InputSystem::crank_angle` and `InputSystem::crank_change`: One should explicitely choose the angle unit by calling the respective `*_deg` or `*_rad` method instead.
 
 ### Documentation
 

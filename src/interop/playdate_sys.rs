@@ -1,40 +1,36 @@
 use core::ptr;
 
-use playdate_sys_v02::ffi::PDButtons;
+use playdate_sys_v02::ffi::{PDButtons, PlaydateAPI};
 
-use crate::{Button, ButtonSet, ButtonsState, InputSource};
+use crate::{Button, ButtonSet, ButtonsState, ButtonsStateSource, CrankStateSource};
 
-/// Implementation of [`InputSource`] that calls the playdate system
-///
-/// Can only be used in real playdate simulator or device.
-pub struct PlaydateInput<'a> {
-    system: &'a playdate_sys_v02::ffi::playdate_sys,
-}
-
-impl<'a> PlaydateInput<'a> {
-    /// Create the input system from a reference to the playdate system API
-    ///
-    /// # Safety
-    ///
-    /// * The referenced api must be a valid and initialized playdate api that's safe to use for the lifetime `'a`
-    ///
-    #[must_use]
-    pub unsafe fn from_c_api(system: &'a playdate_sys_v02::ffi::playdate_sys) -> Self {
-        Self { system }
+impl ButtonsStateSource for PlaydateAPI {
+    fn buttons_state(&self) -> ButtonsState {
+        unsafe { self.system.as_ref().unwrap().buttons_state() }
     }
 }
 
-impl<'a> crate::private::Sealed for PlaydateInput<'a> {}
+impl CrankStateSource for PlaydateAPI {
+    fn crank_angle_deg(&self) -> f32 {
+        unsafe { self.system.as_ref().unwrap().crank_angle_deg() }
+    }
 
-impl<'a> InputSource for PlaydateInput<'a> {
-    #[must_use]
-    #[allow(clippy::missing_panics_doc)]
+    fn crank_change_deg(&self) -> f32 {
+        unsafe { self.system.as_ref().unwrap().crank_change_deg() }
+    }
+
+    fn is_crank_docked(&self) -> bool {
+        unsafe { self.system.as_ref().unwrap().is_crank_docked() }
+    }
+}
+
+impl ButtonsStateSource for playdate_sys_v02::ffi::playdate_sys {
     fn buttons_state(&self) -> ButtonsState {
         let mut current = PDButtons(0);
         let mut pushed = PDButtons(0);
         let mut released = PDButtons(0);
         unsafe {
-            self.system.getButtonState.unwrap()(
+            self.getButtonState.unwrap()(
                 ptr::addr_of_mut!(current),
                 ptr::addr_of_mut!(pushed),
                 ptr::addr_of_mut!(released),
@@ -46,20 +42,19 @@ impl<'a> InputSource for PlaydateInput<'a> {
             released: released.into(),
         }
     }
+}
 
-    #[must_use]
+impl CrankStateSource for playdate_sys_v02::ffi::playdate_sys {
     fn crank_angle_deg(&self) -> f32 {
-        unsafe { self.system.getCrankAngle.unwrap()() }
+        unsafe { self.getCrankAngle.unwrap()() }
     }
 
-    #[must_use]
     fn crank_change_deg(&self) -> f32 {
-        unsafe { self.system.getCrankChange.unwrap()() }
+        unsafe { self.getCrankChange.unwrap()() }
     }
 
-    #[must_use]
     fn is_crank_docked(&self) -> bool {
-        unsafe { self.system.isCrankDocked.unwrap()() == 1 }
+        unsafe { self.isCrankDocked.unwrap()() == 1 }
     }
 }
 
