@@ -85,7 +85,7 @@ impl<'a> InputSystem<'a> {
 pub struct ButtonsState {
     /// Buttons currently being pressed
     pub current: ButtonSet,
-    /// Buttons that are have just started to be pressed
+    /// Buttons that have just started to be pressed
     ///
     /// Meaning they were not pressed last frame, and are now currently pressed
     pub pushed: ButtonSet,
@@ -170,9 +170,7 @@ impl ButtonsState {
     }
 }
 
-/// Set of buttons
-///
-/// Supports `&` and `|` operators.
+/// Set of [`Button`]
 #[derive(Debug, Copy, Clone, Default, Eq, PartialEq)]
 pub struct ButtonSet(u8);
 
