@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 * `InputSystem::crank_angle_rad` and `InputSystem::crank_change_rad` to get crank state in radians
 * `InputSystem::crank_angle_deg` and `InputSystem::crank_change_deg` to explicitely get crank state in degees
+* Implement `From<ButtonSet>` for `playdate_sys::ffi::PDButtons`
 
 ### Deprecated
 
