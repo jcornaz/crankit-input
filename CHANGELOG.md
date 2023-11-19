@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Documentation
+
+Add maintenance status and alteratives to readme
+
 
 ## [0.3.1] - 2023-11-18
 
