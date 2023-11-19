@@ -2,11 +2,11 @@
 
 //! An ergonomic input API for the playdate
 //!
-//! The traits [`ButtonsStateSource`] and [`CrankStateSource`] describes the available API.
+//! The traits [`ButtonsStateSource`] and [`CrankStateSource`] describe the available API.
 //!
 //! ## Feature flags
 //!
-//! * `playdate-sys-v02`: provides implementations of the input source traits for the type `ffi::playdate_sys` and `ffi::PlaydateAPI` of the crate [`playdate-sys`](https://docs.rs/playdate-sys/0.2) (version `0.2`)
+//! * `playdate-sys-v02` (default): provides implementations of the input source traits for the type `ffi::playdate_sys` and `ffi::PlaydateAPI` of the crate [`playdate-sys`](https://docs.rs/playdate-sys/0.2) (version `0.2`)
 
 mod button;
 mod interop;
