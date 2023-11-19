@@ -7,6 +7,19 @@
 
 An ergonomic input API for the playdate
 
+## Maintenance status
+
+I made this project for my personal use and I'll be happy if it can be useful to anyone else.
+But bear in mind that it only contains features that I need, and may never be "feature complete" as
+I only add new features when needed. If you are missing something, you are welcome to contribute.
+
+## Alternatives
+
+The [playdate] project is the best place to get started with playdate development in Rust.
+
+Note, that `crankit-input` is, in fact, compatible with the [playdate] crates, so you don't have to choose one over the other but can use them all together!
+
+[playdate]: https://github.com/boozook/playdate
 
 ## Unlicense
 
