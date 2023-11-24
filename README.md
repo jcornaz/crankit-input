@@ -9,9 +9,9 @@ An ergonomic input API for the playdate
 
 ## Maintenance status
 
-I made this project for my personal use and I'll be happy if it can be useful to anyone else.
-But bear in mind that it only contains features that I need, and may never be "feature complete" as
-I only add new features when needed. If you are missing something, you are welcome to contribute.
+I made this project for my personal use. I'll be happy if it can be useful to anyone else, but there are a few things to keep in mind:
+* I only write documentation for my "future self", which may not be enough for people who are not in my head. But I do welcome contributions to clarify and improve the documentation.
+* The project may never be "feature complete" as I only add new features when I need them. But I do welcome suggestions and contributions for new features.
 
 ## Alternatives
 
