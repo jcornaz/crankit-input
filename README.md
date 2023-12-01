@@ -3,7 +3,7 @@
 
 [![License](https://img.shields.io/crates/l/crankit-input)](#Unlicense)
 [![Crates.io](https://img.shields.io/crates/v/crankit-input)](https://crates.io/crates/crankit-input)
-[![Docs](https://docs.rs/impacted/badge.svg)](https://docs.rs/crankit-input)
+[![Docs](https://docs.rs/crankit-input/badge.svg)](https://docs.rs/crankit-input)
 
 An ergonomic input API for the playdate
 
