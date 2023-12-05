@@ -1,0 +1,20 @@
+[package]
+name = "crankit-input-example"
+version = "0.1.0"
+edition = "2021"
+description = "example for crankit-input"
+
+[dependencies]
+crankit-game-loop = "0.1.0"
+crankit-input = { path = "..", features = ["playdate-sys-v02"] }
+playdate-sys = { version = "0.2.11", default-features = false }
+
+[lib]
+crate-type = [
+    "dylib", # for simulator
+    "staticlib", # for hardware
+]
+
+[package.metadata.playdate]
+bundle-id = "com.github.jcornaz.crankit-input-example"
+

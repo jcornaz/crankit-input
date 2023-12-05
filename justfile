@@ -12,6 +12,7 @@ test:
 	cargo hack test --tests --feature-powerset 
 	cargo test --examples --all-features
 	cargo test --doc --all-features
+	cd example && cargo playdate package --device
 
 # Run the static code analysis
 lint:
@@ -24,6 +25,9 @@ doc *args:
 
 # Open the documentation page
 doc-open: (doc "--open")
+
+run-example:
+	cd example && cargo playdate run
 
 # Clean up compilation output
 clean:

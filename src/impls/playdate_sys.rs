@@ -67,14 +67,14 @@ impl From<PDButtons> for ButtonSet {
 
 impl From<Button> for PDButtons {
     fn from(value: Button) -> Self {
-        Self(value as u32)
+        Self(value as _)
     }
 }
 
 impl From<ButtonSet> for PDButtons {
     #[allow(clippy::cast_lossless)]
     fn from(value: ButtonSet) -> Self {
-        Self(value.0 as u32)
+        Self(value.0 as _)
     }
 }
 
